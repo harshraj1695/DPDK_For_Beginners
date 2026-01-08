@@ -1,0 +1,61 @@
+# -------------------------------
+# STEP 1 — Download DPDK
+# -------------------------------
+cd ~/Downloads/
+wget https://fast.dpdk.org/rel/dpdk-25.11.tar.xz
+tar xJf dpdk-25.11.tar.xz
+cd dpdk-25.11
+
+# -------------------------------
+# STEP 2 — Install Build Tools
+# -------------------------------
+sudo apt update
+sudo apt install -y meson ninja-build python3-pyelftools
+
+# -------------------------------
+# STEP 3 — Install Required Libraries
+# -------------------------------
+sudo apt install -y \
+    libnuma-dev \
+    libfdt-dev \
+    libbsd-dev \
+    libjansson-dev \
+    libpcap-dev \
+    libarchive-dev
+
+# -------------------------------
+# STEP 4 — Configure build with Meson
+# -------------------------------
+meson setup build
+
+# -------------------------------
+# STEP 5 — Build DPDK
+# -------------------------------
+cd build
+ninja -j$(nproc)
+
+# -------------------------------
+# STEP 6 — Install DPDK system-wide
+# -------------------------------
+sudo ninja install
+sudo ldconfig
+
+# -------------------------------
+# STEP 7 — Setup pkg-config path
+# -------------------------------
+echo 'export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig' >> ~/.bashrc
+source ~/.bashrc
+
+# -------------------------------
+# STEP 8 — Verify DPDK installation
+# -------------------------------
+pkg-config --libs libdpdk
+pkg-config --cflags libdpdk
+
+# -------------------------------
+# STEP 9 — Run a test DPDK application
+# -------------------------------
+cd ~/dpdk/hello_world/
+cc sample.c -o sample $(pkg-config --cflags --libs libdpdk)
+sudo ./sample --no-huge -m 512
+
