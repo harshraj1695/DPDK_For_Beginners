@@ -1,0 +1,7 @@
+// to install tuntap
+sudo ip tuntap add dev tap0 mode tap user $USER multi_queue
+sudo ip link set tap0 up
+
+
+// to run the application
+sudo ./sample -l 0 --no-huge --vdev=net_tap0,iface=tap0
