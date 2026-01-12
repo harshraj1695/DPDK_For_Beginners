@@ -11,4 +11,6 @@ int main(int argc, char **argv) {
   // No of ports available
   uint16_t nb_ports = rte_eth_dev_count_avail();
   printf("Found %u ports\n", nb_ports);
+    return 0;
+    
 }
