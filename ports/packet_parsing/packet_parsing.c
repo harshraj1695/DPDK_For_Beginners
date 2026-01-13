@@ -8,12 +8,13 @@
 #include <rte_tcp.h>
 #include <rte_udp.h>
 
-static void print_ipv6(const uint8_t ip[16]) {
-  printf("%02x%02x:%02x%02x:%02x%02x:%02x%02x:"
-         "%02x%02x:%02x%02x:%02x%02x:%02x%02x",
-         ip[0], ip[1], ip[2], ip[3], ip[4], ip[5], ip[6], ip[7], ip[8], ip[9],
-         ip[10], ip[11], ip[12], ip[13], ip[14], ip[15]);
-  printf("\n");
+void print_ipv6_addr(uint8_t a[16]) {
+  for (int i = 0; i < 16; i += 2) {
+    printf("%02x%02x", a[i], a[i + 1]);
+
+    if (i < 14)
+      printf(":");
+  }
 }
 
 void parse_packet(struct rte_mbuf *m) {
@@ -129,17 +130,11 @@ void parse_packet(struct rte_mbuf *m) {
 
     printf("L3: IPv6\n");
 
-    uint8_t src_ip[16];
-    uint8_t dst_ip[16];
+    printf("SRC IPv6: ");
+    print_ipv6_addr(ip6->src_addr.a);
 
-    memcpy(src_ip, &ip6->src_addr, 16);
-    memcpy(dst_ip, &ip6->dst_addr, 16);
-
-    printf("\nSRC IPv6:\n");
-    print_ipv6(src_ip);
-    printf("\n");
-    printf("DST IPv6:\n");
-    print_ipv6(dst_ip);
+    printf("\nDST IPv6: ");
+    print_ipv6_addr(ip6->dst_addr.a);
     printf("\n");
 
     uint8_t proto = ip6->proto;
