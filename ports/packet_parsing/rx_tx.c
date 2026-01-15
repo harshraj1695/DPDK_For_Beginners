@@ -22,7 +22,7 @@ void run_rx_tx_loop(uint16_t port_id)
         for (int i = 0; i < nb_rx; i++) {
             struct rte_mbuf *m = bufs[i];
 
-            print_mbuf_info(m);
+            // print_mbuf_info(m);
 
             uint8_t *data = rte_pktmbuf_mtod(m, uint8_t *);
             uint16_t len = rte_pktmbuf_data_len(m);
