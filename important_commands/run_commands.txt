@@ -1,7 +1,8 @@
 // running the dpdk application with socket interface 
 sudo ./main --huge-dir=/dev/hugepages -l 0-3 --vdev=net_af_packet0,iface=eth0
 
-
+//for tcp dump
+sudo tcpdump -i eth0 -nn -vvv
 
 // Makefile for debug 
 CFLAGS += $(shell pkg-config --cflags libdpdk)
