@@ -10,8 +10,13 @@ CFLAGS += -g -O0 -fno-omit-frame-pointer -Wall -Wextra -DDEBUG
 LDFLAGS += $(shell pkg-config --libs libdpdk)
 
 
+{// to run the setup_veth__bride.sh
 
-
+//MAKE THE SCRIPT EXECUTABLE
+chmod +x setup_veth_bridge.sh
+// to run
+sudo ./setup_veth_bridge.sh
+}
 
 // project ideas for vpp nad dpdk 
 
