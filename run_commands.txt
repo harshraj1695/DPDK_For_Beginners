@@ -7,3 +7,17 @@ sudo ./main --huge-dir=/dev/hugepages -l 0-3 --vdev=net_af_packet0,iface=eth0
 CFLAGS += $(shell pkg-config --cflags libdpdk)
 CFLAGS += -g -O0 -fno-omit-frame-pointer -Wall -Wextra -DDEBUG
 LDFLAGS += $(shell pkg-config --libs libdpdk)
+
+
+
+
+
+// project ideas for vpp nad dpdk 
+
+DPDK-based firewall
+
+VPP NAT44 load balancer
+
+DPDK/VPP packet analyzer (like tcpdump but faster)
+
+DPDK L3 route
