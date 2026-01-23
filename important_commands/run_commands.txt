@@ -9,6 +9,7 @@ CFLAGS += $(shell pkg-config --cflags libdpdk)
 CFLAGS += -g -O0 -fno-omit-frame-pointer -Wall -Wextra -DDEBUG
 LDFLAGS += $(shell pkg-config --libs libdpdk)
 
+sudo gdb --args ./main --no-huge -l 0-3 --vdev=net_af_packet0,iface=eth0
 
 {// to run the setup_veth__bride.sh
 
@@ -24,6 +25,11 @@ sudo ./setup_veth_bridge.sh
  sudo ./your_dpdk_app --no-huge -l 0-1 --vdev=net_tap0,iface=tap0
 
 
+
+// commands to run test pmd
+sudo .build/app/dpdk-testpmd -l 0-3 -- -i
+ // run with af_packet
+sudo ./build/app/dpdk-testpmd -l 0-3 --vdev=net_af_packet0,iface=eth0 -- -i
 
 
 
