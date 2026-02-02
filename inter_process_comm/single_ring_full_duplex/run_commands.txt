@@ -1,0 +1,5 @@
+cc primary.c -o primary \
+  $(pkg-config --cflags --libs libdpdk)
+
+cc secondary.c -o secondary \
+  $(pkg-config --cflags --libs libdpdk)
