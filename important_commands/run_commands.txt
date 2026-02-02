@@ -23,6 +23,7 @@ sudo ./setup_veth_bridge.sh
  sudo ./your_dpdk_app --no-huge -l 0-1 --vdev=net_af_packet0,iface=eth0
  sudo ./your_dpdk_app --no-huge -l 0-1 --vdev=net_xdp0,iface=eth0
  sudo ./your_dpdk_app --no-huge -l 0-1 --vdev=net_tap0,iface=tap0
+ sudo ./main -l 0-2 --vdev=event_sw0 --service-corelist=1 // for event dev to create software define event
 
 
 
