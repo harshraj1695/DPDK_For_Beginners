@@ -2,22 +2,11 @@
 #include <stdint.h>
 #include <rte_eal.h>
 #include <rte_hash.h>
+#include <rte_hash_crc.h>
+
 
 #define HASH_ENTRIES 1024
 
-/* -------- Custom Hash Function -------- */
-uint32_t my_hash_func(const void *key,
-                      uint32_t key_len,
-                      uint32_t init_val)
-{
-    const uint8_t *data = key;
-    uint32_t hash = init_val;
-
-    for (uint32_t i = 0; i < key_len; i++)
-        hash ^= data[i];
-
-    return hash;
-}
 
 int main(int argc, char **argv)
 {
@@ -28,7 +17,7 @@ int main(int argc, char **argv)
         .name = "custom_hash",
         .entries = HASH_ENTRIES,
         .key_len = sizeof(int),
-        .hash_func = my_hash_func,
+        .hash_func = rte_hash_crc,
         .hash_func_init_val = 12345,
         .socket_id = rte_socket_id(),
     };
