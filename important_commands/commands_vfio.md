@@ -1,3 +1,32 @@
+**Note**
+Please look for the correct names of file, folder and VM Names for these caoomands to work for you
+
+For creating the virtual Interface 
+```bash
+sudo virt-install \
+--name ubuntu-dpd k-vm \
+ --ram 4096 \
+ --vcpus 2 \
+ --disk path=~/ubuntu-vm.qcow2,format=qcow2 \
+ --cdrom ~/ubuntu22.04.iso \
+ --os-variant ubuntu22.04 \
+ --network network=default,model=virtio \ 
+--graphics spice \
+ --boot uefi 
+```
+
+Attaching an interface to an existing VM 
+```bash
+sudo virsh attach-interface \
+ --domain ubuntu22.04 \
+ --type network \
+--source default \
+--model virtio \
+ --config \
+--live
+```
+
+
 for binding the nic
   ```bash
 sudo ./usertools/dpdk-devbind.py -b vfio-pci --noiommu 0000:07:00.0
