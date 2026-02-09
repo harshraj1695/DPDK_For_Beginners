@@ -16,8 +16,7 @@ struct rte_hash *create_mac_table(void) {
       .name = "mac_table",
       .entries = HASH_ENTRIES,
       .key_len = sizeof(struct rte_ether_addr),
-      .hash_func = 
-      ,
+      .hash_func = rte_hash_crc,
       .hash_func_init_val = 0,
       .socket_id = rte_socket_id(),
   };
