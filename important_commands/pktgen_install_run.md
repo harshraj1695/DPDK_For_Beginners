@@ -83,6 +83,11 @@ Run using full binary path:
 sudo ./build/app/pktgen -l 0-3 -n 4 -- -P -m "[1:2].0"
 ```
 
+Using Tap interface on VM
+
+``` bash
+sudo ./build/app/pktgen -l 0-3 -n 4 --vdev=net_tap0,iface=tap0 -- -P -m "[1:2].0"
+```
 ------------------------------------------------------------------------
 
 ##  Explanation of Run Command
