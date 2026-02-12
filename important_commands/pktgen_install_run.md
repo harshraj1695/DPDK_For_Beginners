@@ -18,6 +18,13 @@ git clone https://github.com/pktgen/Pktgen-DPDK.git
 cd Pktgen-DPDK
 ```
 
+
+## Install libbsd dev package:
+``` bash
+sudo apt install libbsd-dev
+```
+
+
 ------------------------------------------------------------------------
 
 
