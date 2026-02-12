@@ -6,8 +6,6 @@ extern struct rte_ring *ring_rx_to_parse;
 extern struct rte_ring *ring_parse_to_tx;
 extern volatile int force_quit;
 #include <stdio.h>
-#include <string.h>
-
 #include <rte_ether.h>
 #include <rte_icmp.h>
 #include <rte_ip.h>
