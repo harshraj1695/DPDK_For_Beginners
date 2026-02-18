@@ -1,125 +1,103 @@
-# 📘 Cscope + Ctags + Vim Navigation Notes
+cat > notes.md << 'EOF'
+# Cscope + Ctags + Vim Navigation Notes
 
-## 🔧 1. Install Required Tools
+## 1. Install Required Tools
 
-``` bash
 sudo apt update
 sudo apt install cscope universal-ctags
-```
 
-------------------------------------------------------------------------
+---
 
-# 📂 2. Generate Databases (run in project root)
+# 2. Generate Databases (run in project root)
 
-## Step 1 --- Create file list for cscope
+## Step 1 — Create file list for cscope
 
-``` bash
 find . -name "*.[ch]" > cscope.files
-```
 
 For C++ projects:
 
-``` bash
 find . -name "*.[ch]" -o -name "*.cpp" > cscope.files
-```
 
-------------------------------------------------------------------------
+---
 
-## Step 2 --- Build cscope database
+## Step 2 — Build cscope database
 
-``` bash
 cscope -Rbq
-```
 
 Generated files:
 
-    cscope.out
-    cscope.in.out
-    cscope.po.out
+cscope.out
+cscope.in.out
+cscope.po.out
 
-------------------------------------------------------------------------
+---
 
-## Step 3 --- Build tags database
+## Step 3 — Build tags database
 
-``` bash
 ctags -R .
-```
 
 Generated file:
 
-    tags
+tags
 
-------------------------------------------------------------------------
+---
 
-# 🖥️ 3. Using Cscope Terminal UI
+# 3. Using Cscope Terminal UI
 
 Start UI:
 
-``` bash
 cscope
-```
 
 ## Navigation Keys
 
-  Key      Action
-  -------- ----------------------
-  ↑ ↓      Move between options
-  TAB      Move to input box
-  ENTER    Search / Open result
-  Ctrl+B   Go back
-  q        Exit pager
+↑ ↓    Move between options  
+TAB    Move to input box  
+ENTER  Search / Open result  
+Ctrl+B Go back  
+q      Exit pager  
 
-------------------------------------------------------------------------
+---
 
-# 🔎 4. Useful Searches in Cscope
+# 4. Useful Searches in Cscope
 
-  Option                              Use
-  ----------------------------------- -------------------------------
-  Find this C symbol                  Search functions/structs/vars
-  Find global definition              Jump to function definition
-  Functions calling this function     Who calls it
-  Functions called by this function   What it calls
-  Find this text string               Fast grep
-  Find this file                      Open file quickly
+Find this C symbol                  Search functions, structs, variables  
+Find global definition              Jump to function definition  
+Functions calling this function     Show callers  
+Functions called by this function   Show called functions  
+Find this text string               Text search  
+Find this file                      Open file quickly  
 
-------------------------------------------------------------------------
+---
 
-# 🧠 5. Using Vim with Cscope + Ctags
+# 5. Using Vim with Cscope + Ctags
 
 Open file:
 
-``` bash
 vim main.c
-```
 
-Add cscope DB:
+Add cscope database:
 
-``` vim
 :cs add cscope.out
-```
 
-------------------------------------------------------------------------
+---
 
-## 🎯 Jump Commands in Vim
+## Jump Commands in Vim
 
-  Command           Meaning
-  ----------------- ----------------------------------
-  Ctrl+\]           Jump to definition (tags/cscope)
-  Ctrl+T            Go back to previous location
-  :cs find g func   Go to global definition
-  :cs find c func   Show callers
-  :cs find d func   Show functions it calls
-  :cs find t text   Search text
-  gd                Go to local definition
-  gD                Go to global definition
+Ctrl+]           Jump to definition  
+Ctrl+T           Go back to previous location  
+:cs find g func  Go to global definition  
+:cs find c func  Show callers  
+:cs find d func  Show called functions  
+:cs find t text  Search text  
+gd               Go to local definition  
+gD               Go to global definition  
 
-------------------------------------------------------------------------
+---
 
-# ⚙️ 6. Recommended `.vimrc` Setup
+# 6. Recommended .vimrc Setup
 
-Add this to `~/.vimrc`:
+Add this to ~/.vimrc:
 
-``` vim
 set tags=./tags;,tags
 
 if filereadable("cscope.out")
@@ -128,34 +106,26 @@ endif
 
 set cscopequickfix=s-,c-,d-,i-,t-,e-
 
-" Make Ctrl+] use cscope
 nnoremap <C-]> :cs find g <C-R>=expand("<cword>")<CR><CR>
-```
 
-------------------------------------------------------------------------
+---
 
-# 🔁 7. Rebuild Databases After Code Change
+# 7. Rebuild Databases After Code Change
 
-``` bash
 find . -name "*.[ch]" > cscope.files
 cscope -Rbq
 ctags -R .
-```
 
-------------------------------------------------------------------------
+---
 
-# 🚀 8. Typical Workflow
+# 8. Typical Workflow
 
-1.  Build DB once\
-2.  Open Vim\
-3.  Ctrl+\] → jump to function\
-4.  Ctrl+T → go back\
-5.  :cs find c func → see call chain\
-6.  Trace execution across files easily
+1. Build databases once
+2. Open Vim
+3. Ctrl+] to jump to function
+4. Ctrl+T to go back
+5. Use :cs find c func to see callers
+6. Follow execution across files
 
-------------------------------------------------------------------------
-
-# ✅ Done
-
-You now have terminal-based IDE navigation for large C projects (DPDK,
-kernel, drivers, etc.).
+Done.
+EOF
