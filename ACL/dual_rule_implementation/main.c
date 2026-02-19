@@ -2,6 +2,7 @@
 #include <stdint.h>
 #include <string.h>
 #include <stddef.h>
+#include <unistd.h>
 
 #include <rte_eal.h>
 #include <rte_acl.h>
@@ -11,65 +12,67 @@
 #define MAX_RULES  32
 #define NUM_CATEGORIES 1
 
-/* Rule structure */
+#define ACTION_ALLOW 777
+#define ACTION_DROP  0
+
 RTE_ACL_RULE_DEF(acl_rule, NUM_FIELDS);
 
 struct pkt_key {
+    uint8_t  proto;      // must be first
     uint32_t src_ip;
     uint32_t dst_ip;
     uint16_t src_port;
     uint16_t dst_port;
-    uint8_t  proto;
 };
 
 enum {
+    PROTO_FIELD,
     SRC_FIELD,
     DST_FIELD,
     SPORT_FIELD,
-    DPORT_FIELD,
-    PROTO_FIELD
+    DPORT_FIELD
 };
 
 static struct rte_acl_field_def field_defs[NUM_FIELDS] = {
 
-    {  // SRC IP
-        .type = RTE_ACL_FIELD_TYPE_MASK,
-        .size = sizeof(uint32_t),
-        .field_index = SRC_FIELD,
-        .input_index = 0,
-        .offset = offsetof(struct pkt_key, src_ip),
-    },
-
-    {   // DST IP
-        .type = RTE_ACL_FIELD_TYPE_MASK,
-        .size = sizeof(uint32_t),
-        .field_index = DST_FIELD,
-        .input_index = 0,
-        .offset = offsetof(struct pkt_key, dst_ip),
-    },
-
-    {   // SRC PORT 
-        .type = RTE_ACL_FIELD_TYPE_RANGE,
-        .size = sizeof(uint16_t),
-        .field_index = SPORT_FIELD,
-        .input_index = 1,
-        .offset = offsetof(struct pkt_key, src_port),
-    },
-
-    {   // DST PORT 
-        .type = RTE_ACL_FIELD_TYPE_RANGE,
-        .size = sizeof(uint16_t),
-        .field_index = DPORT_FIELD,
-        .input_index = 1,
-        .offset = offsetof(struct pkt_key, dst_port),
-    },
-
-    {   // PROTOCOL
+    {
         .type = RTE_ACL_FIELD_TYPE_BITMASK,
         .size = sizeof(uint8_t),
         .field_index = PROTO_FIELD,
-        .input_index = 2,
+        .input_index = 0,
         .offset = offsetof(struct pkt_key, proto),
+    },
+
+    {
+        .type = RTE_ACL_FIELD_TYPE_MASK,
+        .size = sizeof(uint32_t),
+        .field_index = SRC_FIELD,
+        .input_index = 1,
+        .offset = offsetof(struct pkt_key, src_ip),
+    },
+
+    {
+        .type = RTE_ACL_FIELD_TYPE_MASK,
+        .size = sizeof(uint32_t),
+        .field_index = DST_FIELD,
+        .input_index = 2,
+        .offset = offsetof(struct pkt_key, dst_ip),
+    },
+
+    {
+        .type = RTE_ACL_FIELD_TYPE_RANGE,
+        .size = sizeof(uint16_t),
+        .field_index = SPORT_FIELD,
+        .input_index = 3,
+        .offset = offsetof(struct pkt_key, src_port),
+    },
+
+    {
+        .type = RTE_ACL_FIELD_TYPE_RANGE,
+        .size = sizeof(uint16_t),
+        .field_index = DPORT_FIELD,
+        .input_index = 4,
+        .offset = offsetof(struct pkt_key, dst_port),
     }
 };
 
@@ -80,7 +83,6 @@ int main(int argc, char **argv)
         return -1;
     }
 
-    // Create ACL context 
     struct rte_acl_param prm = {
         .name = "acl_ctx",
         .socket_id = rte_socket_id(),
@@ -93,47 +95,47 @@ int main(int argc, char **argv)
         printf("ACL create failed\n");
         return -1;
     }
-// Add a rule to ACL
-    struct acl_rule rule;
-    memset(&rule, 0, sizeof(rule));
 
-    rule.data.priority = 100;
-    rule.data.category_mask = 1;
-    rule.data.userdata = 777;   // result if matched
+    struct acl_rule rules[2];
+    memset(rules, 0, sizeof(rules));
 
-    // SRC IP = 140.82.112.21 /
-    rule.field[SRC_FIELD].value.u32 =
-        rte_cpu_to_be_32(RTE_IPV4(140,82,112,21));
-    rule.field[SRC_FIELD].mask_range.u32 = 32;
+    // Rule 0: allow specific TCP flow
+    rules[0].data.priority = 100;
+    rules[0].data.category_mask = 1;
+    rules[0].data.userdata = ACTION_ALLOW;
 
-    // DST IP = 172.17.166.200 
-    rule.field[DST_FIELD].value.u32 =
-        rte_cpu_to_be_32(RTE_IPV4(172,17,166,200));
-    rule.field[DST_FIELD].mask_range.u32 = 32;
+    rules[0].field[PROTO_FIELD].value.u8 = IPPROTO_TCP;
+    rules[0].field[PROTO_FIELD].mask_range.u8 = 0xFF;
 
-    // SRC PORT = 443 
-    rule.field[SPORT_FIELD].value.u16 =
-        rte_cpu_to_be_16(443);
-    rule.field[SPORT_FIELD].mask_range.u16 = 443;
+    rules[0].field[SRC_FIELD].value.u32 = RTE_IPV4(140,82,112,21);
+    rules[0].field[SRC_FIELD].mask_range.u32 = 32;
 
-    // DST PORT = 42960 
-    rule.field[DPORT_FIELD].value.u16 =
-        rte_cpu_to_be_16(42960);
-    rule.field[DPORT_FIELD].mask_range.u16 = 42960;
+    rules[0].field[DST_FIELD].value.u32 = RTE_IPV4(172,17,166,200);
+    rules[0].field[DST_FIELD].mask_range.u32 = 32;
 
-    // PROTO TCP 
-    rule.field[PROTO_FIELD].value.u8 = IPPROTO_TCP;
-    rule.field[PROTO_FIELD].mask_range.u8 = 0xFF;
+    rules[0].field[SPORT_FIELD].value.u16 = 443;
+    rules[0].field[SPORT_FIELD].mask_range.u16 = 443;
 
-    if (rte_acl_add_rules(ctx, (struct rte_acl_rule *)&rule, 1) < 0) {
+    rules[0].field[DPORT_FIELD].value.u16 = 42960;
+    rules[0].field[DPORT_FIELD].mask_range.u16 = 42960;
+
+    // Rule 1: default DROP (wildcard rule)
+    rules[1].data.priority = 1;
+    rules[1].data.category_mask = 1;
+    rules[1].data.userdata = ACTION_DROP;
+
+    for (int i = 0; i < NUM_FIELDS; i++) {
+        rules[1].field[i].value.u64 = 0;
+        rules[1].field[i].mask_range.u64 = 0;
+    }
+
+    if (rte_acl_add_rules(ctx, (struct rte_acl_rule *)rules, 2) < 0) {
         printf("Add rules failed\n");
         return -1;
     }
 
-    //  BUILD ACL 
     struct rte_acl_config cfg;
     memset(&cfg, 0, sizeof(cfg));
-
     cfg.num_categories = NUM_CATEGORIES;
     cfg.num_fields = NUM_FIELDS;
     memcpy(cfg.defs, field_defs, sizeof(field_defs));
@@ -145,26 +147,30 @@ int main(int argc, char **argv)
 
     printf("ACL built successfully\n");
 
-
     struct pkt_key pkt;
 
+    pkt.proto    = IPPROTO_TCP;
     pkt.src_ip   = rte_cpu_to_be_32(RTE_IPV4(140,82,112,21));
     pkt.dst_ip   = rte_cpu_to_be_32(RTE_IPV4(172,17,166,200));
     pkt.src_port = rte_cpu_to_be_16(443);
     pkt.dst_port = rte_cpu_to_be_16(42960);
-    pkt.proto    = IPPROTO_TCP;
 
     const uint8_t *data[1] = {(const uint8_t *)&pkt};
     uint32_t result[1];
-while(1){
-    rte_acl_classify(ctx, data, result, 1, NUM_CATEGORIES);
 
-    printf("ACL result userdata = %u\n", result[0]);
+    while (1) {
 
-    if (result[0] == 777)
-        printf("MATCHED: packet allowed\n");
-    else
-        printf("NOT MATCHED: packet blocked\n");
-}
+        rte_acl_classify(ctx, data, result, 1, NUM_CATEGORIES);
+
+        printf("ACL result userdata = %u\n", result[0]);
+
+        if (result[0] == ACTION_ALLOW)
+            printf("MATCHED: packet allowed\n");
+        else
+            printf("DEFAULT DROP applied\n");
+
+        sleep(1);
+    }
+
     return 0;
 }

@@ -1,5 +1,5 @@
-APP = main2
-SRC = main2.c
+APP = main
+SRC = main.c
 
 CC = gcc
 
