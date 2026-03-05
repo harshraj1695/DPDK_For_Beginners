@@ -191,6 +191,9 @@ int main(int argc, char **argv)
     if (ret < 0)
         rte_exit(EXIT_FAILURE, "EAL init failed\n");
 
+    //   /* Enable multi-core dispatch model */
+    // rte_graph_worker_model_set(RTE_GRAPH_MODEL_MCORE_DISPATCH);
+
     signal(SIGINT, handler);
 
     /* ***** CREATE MEMPOOL ***** */
@@ -226,7 +229,7 @@ int main(int argc, char **argv)
     graph = rte_graph_lookup("pipeline_graph");
 
     printf("Running RX → L2 → IPv4/IPv6 → TX Pipeline...\n");
-
+    printf("model %d\n", rte_graph_worker_model_no_check_get(graph));
     while (!quit)
         rte_graph_walk(graph);
 
