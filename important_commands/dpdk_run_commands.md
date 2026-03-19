@@ -86,6 +86,19 @@ sudo ./main -l 0-2 --vdev=event_sw0 --service-corelist=1
 sudo ./main -l 0-2 --vdev=event_sw0 -S 1
 ```
 
+# With muti queue support
+
+```bash
+sudo python3 tools/dpdk_afpacket_bench.py \
+  --num-ifaces 2 \
+  --app 'main::/absolute/path/to/main --no-huge -l 0-1 \
+  --vdev=net_af_packet0,iface={iface0} \
+  --vdev=net_af_packet1,iface={iface1}' \
+  --sweep-sizes 64 128 256 512 1024 1500 \
+  --count 50000 \
+  --csv results.csv
+```
+
 ------------------------------------------------------------------------
 
 ## Running Multi-process DPDK Applications
