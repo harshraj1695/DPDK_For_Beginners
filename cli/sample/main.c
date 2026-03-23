@@ -1,3 +1,5 @@
+#include <rte_launch.h>
+#include <rte_lcore.h>
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
