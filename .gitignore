@@ -1,7 +1,7 @@
 # =========================
 # Build / Binary Outputs
 # =========================
-dpdk_tun_app       # your compiled app
+dpdk_tun_app
 *.out
 *.exe
 *.bin
@@ -51,3 +51,18 @@ __pycache__/
 
 # Mac OS
 .DS_Store
+
+
+# =========================
+# Node / React
+# =========================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+dist/
+build/
+
+# Vite / React cache
+.vite/
