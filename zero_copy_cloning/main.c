@@ -59,7 +59,7 @@ int main(int argc, char **argv)
 
     char *data_clone = rte_pktmbuf_mtod(m2, char *);
 
-    printf("Cloned packet data: %s\n", data_clone);
+    printf("Cloned packet data: %s\n", data_clone);  
 
     // Show both point to SAME buffer
     printf("\nBuffer addresses:\n");
