@@ -1,5 +1,5 @@
 APP = main
-SRC = main.c mempool.c port.c saveip.c source.h
+SRC = main.c mempool.c port.c hash.c source.h
 
 CFLAGS += -O3 -Wall
 CFLAGS += $(shell pkg-config --cflags libdpdk)

@@ -14,6 +14,9 @@ void hash_ips(struct rte_hash *ht, struct rte_mbuf **bufs, uint16_t nb_rx);
 /* print all stored IPs */
 void hash_ips_dump(struct rte_hash *ht);
 
+// reset hash table 
+void reset_ip_hash(struct rte_hash *ht);
+
 #endif
 
 
