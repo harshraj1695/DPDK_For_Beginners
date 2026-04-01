@@ -1,0 +1,6 @@
+# NAT mappings — format: private_ip public_ip
+# one mapping per line, lines starting with # are ignored
+
+172.30.0.1   203.0.113.5
+192.168.1.10 203.0.113.5
+192.168.1.11 203.0.113.6
