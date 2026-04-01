@@ -75,7 +75,7 @@ int main(int argc, char *argv[]) {
       }
 
       // process packets and store IPs in hash table
-      hash_ips(ht, bufs, nb_rx);
+    //   hash_ips(ht, bufs, nb_rx);
 
       // apply static NAT — rewrites src IP before tx
       nat_apply(nat, bufs, nb_rx);
