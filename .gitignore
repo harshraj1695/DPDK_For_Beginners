@@ -14,7 +14,7 @@ dpdk_tun_app
 *.so.*
 *.d
 *.cmd
-
+.codex
 # Build directories
 build/
 out/
