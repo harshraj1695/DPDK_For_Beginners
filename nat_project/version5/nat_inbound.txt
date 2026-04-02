@@ -1,0 +1,7 @@
+# inbound NAT mappings — format: public_ip private_ip
+# only packets whose dst matches a public_ip here will be forwarded
+# all others are dropped
+
+203.0.113.1 192.168.1.10
+203.0.113.2 192.168.1.11
+203.0.113.3 192.168.1.12
