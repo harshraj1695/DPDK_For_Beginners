@@ -127,9 +127,7 @@ static void expiry_timer_cb(struct rte_timer *tim __rte_unused, void *arg)
     }
 }
 
-// ----------------------------------------------------------------
 // timer 2 callback — fires after 10s consecutive no traffic
-// ----------------------------------------------------------------
 static void table_timer_cb(struct rte_timer *tim __rte_unused, void *arg)
 {
     struct nat_pool *pool = arg;
@@ -162,9 +160,7 @@ void nat_table_timer_arm(struct nat_pool *pool, uint64_t hz, uint32_t timeout_se
                     pool);
 }
 
-// ----------------------------------------------------------------
 // reset entire pool externally if needed
-// ----------------------------------------------------------------
 void nat_pool_reset(struct nat_pool *pool)
 {
     rte_timer_stop(&pool->table_timer);
@@ -179,9 +175,7 @@ void nat_pool_reset(struct nat_pool *pool)
     pool->started = 0;
 }
 
-// ----------------------------------------------------------------
 // inbound: add single static mapping
-// ----------------------------------------------------------------
 void nat_inbound_add(struct nat_pool *pool, const char *public_ip, const char *private_ip)
 {
     struct nat_inbound_entry *entry = malloc(sizeof(struct nat_inbound_entry));
@@ -199,9 +193,7 @@ void nat_inbound_add(struct nat_pool *pool, const char *public_ip, const char *p
     printf("Inbound mapping added: %s -> %s\n", public_ip, private_ip);
 }
 
-// ----------------------------------------------------------------
 // inbound: load from file
-// ----------------------------------------------------------------
 void nat_inbound_load_from_file(struct nat_pool *pool, const char *filepath)
 {
     FILE *f = fopen(filepath, "r");
@@ -232,9 +224,7 @@ void nat_inbound_load_from_file(struct nat_pool *pool, const char *filepath)
     printf("Loaded %d inbound mappings from %s\n", count, filepath);
 }
 
-// ----------------------------------------------------------------
 // find free outbound slot — pure scan, expiry_timer handles idle release
-// ----------------------------------------------------------------
 static int find_free_slot(struct nat_pool *pool)
 {
     for (uint32_t i = 0; i < pool->pool_size; i++) {
@@ -244,9 +234,7 @@ static int find_free_slot(struct nat_pool *pool)
     return -1;
 }
 
-// ----------------------------------------------------------------
 // rewrite IP + recalculate checksums
-// ----------------------------------------------------------------
 static void rewrite_and_recalc(struct rte_ipv4_hdr *ip, uint32_t new_ip, int is_src)
 {
     if (is_src)
@@ -268,9 +256,7 @@ static void rewrite_and_recalc(struct rte_ipv4_hdr *ip, uint32_t new_ip, int is_
     }
 }
 
-// ----------------------------------------------------------------
 // apply NAT — no timer logic here, all timer handling is in main
-// ----------------------------------------------------------------
 void nat_pool_apply(struct nat_pool *pool, struct rte_mbuf **bufs, uint16_t nb_rx)
 {
     for (uint16_t i = 0; i < nb_rx; i++) {
@@ -331,9 +317,7 @@ void nat_pool_apply(struct nat_pool *pool, struct rte_mbuf **bufs, uint16_t nb_r
     }
 }
 
-// ----------------------------------------------------------------
 // dump all active mappings
-// ----------------------------------------------------------------
 void nat_pool_dump(struct nat_pool *pool)
 {
     printf("\n--- Inbound NAT Map (static) ---\n");
