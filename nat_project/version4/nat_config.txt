@@ -1,0 +1,5 @@
+# NAT pool config
+# format: start_ip range
+# example: 203.0.113.1 5 gives pool 203.0.113.1 to 203.0.113.5
+
+203.0.113.1 5
