@@ -7,7 +7,7 @@
 #include <rte_malloc.h>
 #include <rte_rcu_qsbr.h>
 
-/* ── shared state ── */
+/*  shared state  */
 struct data {
     int value;
 };
@@ -16,7 +16,7 @@ static struct data           *gdata;   /* RCU-protected pointer */
 static struct rte_rcu_qsbr   *qsbr;
 static volatile int           stop;
 
-/* ── reader ── */
+/* reader  */
 static int reader(void *arg)
 {
     (void)arg;
@@ -69,7 +69,6 @@ static void writer(void)
     stop = 1;
 }
 
-/* ── main ── */
 int main(int argc, char **argv)
 {
     rte_eal_init(argc, argv);
@@ -100,9 +99,9 @@ int main(int argc, char **argv)
 }
 
 // ### How it works in 4 steps
-// Writer                          Reader
-// ──────                          ──────
+// Writer                              Reader
+// ──────                              ──────
 // 1. alloc new struct
-// 2. atomic swap (old ↔ new)  ──► reader now sees new value
+// 2. atomic swap (old ↔ new)   ──► reader now sees new value
 // 3. rcu_synchronize()         ──► blocks until reader passes quiescent
 // 4. rte_free(old)             ──► safe, no reader holds old anymore
